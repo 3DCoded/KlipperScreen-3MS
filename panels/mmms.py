@@ -220,11 +220,7 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
-        self._screen.init_klipper()
         self.buttons['reload'].set_label('Reloaded')
-        self.mmms_settings = self._printer.data
-        logging.info(self.mmms_settings)
-        self.change_selected_tool(None, 0)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
