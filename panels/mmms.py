@@ -205,9 +205,11 @@ class Panel(ScreenPanel):
             self.buttons[button].set_sensitive(enable)
     
     def get_mmms_options(self):
-        index = "3ms"
-        items = [i[len(index):] for i in self._screen._config.config.sections() if i.startswith(index)]
-        return {item: self._screen._config._build_preheat_item(index + item) for item in items}
+        config = self._screen._config.config
+        if '3ms' not in config:
+            return {'tools': 2}
+        cfg = config['3ms']
+        return cfg.getint('tools', 2)
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
