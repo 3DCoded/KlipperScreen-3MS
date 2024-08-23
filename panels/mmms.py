@@ -19,7 +19,7 @@ class Panel(ScreenPanel):
         macros = self._printer.get_config_section_list("gcode_macro ")
 
         for macro in macros:
-            logging.log(f'3MS LOG: Macro {dir(macro)}')
+            logging.info(f'3MS LOG: Macro {dir(macro)}')
             break
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
