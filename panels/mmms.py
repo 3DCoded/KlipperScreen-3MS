@@ -221,9 +221,8 @@ class Panel(ScreenPanel):
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
         self.buttons['reload'].set_label('Reloaded')
-        self.mmms_settings = self._printer.config['gcode_macro MMMS_SETTINGS']
-        self.printer_obj = self._printer.data
-        logging.info(self.printer_obj)
+        self.mmms_settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
+        logging.info(self.mmms_settings)
         self.change_selected_tool(None, 0)
     
     def sync_tool(self, widget):
