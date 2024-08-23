@@ -99,7 +99,7 @@ class Panel(ScreenPanel):
             changer.connect("clicked", self.load_menu, 'extruders', _('Extruders'))
             xbox.add(Gtk.Label('3MS Control'))
             self.labels["current_extruder"] = self._gtk.Button("extruder", "")
-            xbox.add(self.labels["current_extruder"])
+            # xbox.add(self.labels["current_extruder"])
             self.labels["current_extruder"].connect("clicked", self.load_menu, 'extruders', _('Extruders'))
         if not self._screen.vertical_mode:
             xbox.add(self.buttons['sync'])
