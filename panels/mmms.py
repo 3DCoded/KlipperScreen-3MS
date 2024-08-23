@@ -38,7 +38,7 @@ class Panel(ScreenPanel):
                 if 1 < len(vel) < 5:
                     self.tools = vel
         self.distance = int(self.distances[1])
-        self.speed = int(self.tools[1])
+        self.selected_tool = int(self.tools[1])
         self.buttons = {
             'extrude': self._gtk.Button("extrude", _("Extrude"), "color4"),
             'load': self._gtk.Button("arrow-down", _("Load"), "color3"),
@@ -128,7 +128,7 @@ class Panel(ScreenPanel):
             ctx.add_class("horizontal_togglebuttons")
             if self._screen.vertical_mode:
                 ctx.add_class("horizontal_togglebuttons_smaller")
-            if int(i) == self.speed:
+            if int(i) == self.selected_tool:
                 ctx.add_class("horizontal_togglebuttons_active")
             speedgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
 
@@ -216,9 +216,9 @@ class Panel(ScreenPanel):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
     
     def sync_tool(self, widget):
-        self._screen.show_popup_message(f'Syncing Tool T{self.speed}', 1)
+        self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
         self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": f"SYNC_TOOL TOOL={self.speed}"})
+                                        {"script": f"SYNC_TOOL TOOL={self.selected_tool}"})
 
     def desync_all_tools(self, widget):
         self._screen.show_popup_message(f'Desyncing All Tools', 1)
@@ -283,9 +283,9 @@ class Panel(ScreenPanel):
 
     def change_speed(self, widget, speed):
         logging.info(f"### Speed {speed}")
-        self.labels[f"speed{self.speed}"].get_style_context().remove_class("horizontal_togglebuttons_active")
+        self.labels[f"speed{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
         self.labels[f"speed{speed}"].get_style_context().add_class("horizontal_togglebuttons_active")
-        self.speed = speed
+        self.selected_tool = speed
 
     def check_min_temp(self, widget, method, direction):
         temp = float(self._printer.get_stat(self.current_extruder, 'temperature'))
@@ -305,7 +305,7 @@ class Panel(ScreenPanel):
     def extrude(self, widget, direction):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._send_action(widget, "printer.gcode.script",
-                                  {"script": f"G1 E{direction}{self.distance} F{self.speed * 60}"})
+                                  {"script": f"G1 E{direction}{self.distance} F{self.selected_tool * 60}"})
 
     def load_unload(self, widget, direction):
         if direction == "-":
