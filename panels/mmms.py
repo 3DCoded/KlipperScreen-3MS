@@ -43,7 +43,7 @@ class Panel(ScreenPanel):
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
-            'retraction': self._gtk.Button("settings", _("Retraction"), "color1")
+            'desync_all': self._gtk.Button("cancel", _("Desync Tool"), "color1")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -56,9 +56,7 @@ class Panel(ScreenPanel):
             "panel": "spoolman"
         })
         self.buttons['sync'].connect("clicked", self.sync_tool)
-        self.buttons['retraction'].connect("clicked", self.menu_item_clicked, {
-            "panel": "retraction"
-        })
+        self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
 
         xbox = Gtk.Box(homogeneous=True)
         limit = 4
@@ -99,7 +97,7 @@ class Panel(ScreenPanel):
             xbox.add(self.buttons['sync'])
             i += 1
         if self._printer.get_config_section("firmware_retraction") and not self._screen.vertical_mode:
-            xbox.add(self.buttons['retraction'])
+            xbox.add(self.buttons['desync_all'])
             i += 1
         if i < limit:
             xbox.add(self.buttons['temperature'])
@@ -179,7 +177,7 @@ class Panel(ScreenPanel):
             settings_box = Gtk.Box(homogeneous=True)
             settings_box.add(self.buttons['sync'])
             if self._printer.get_config_section("firmware_retraction"):
-                settings_box.add(self.buttons['retraction'])
+                settings_box.add(self.buttons['desync_all'])
             grid.attach(settings_box, 0, 3, 4, 1)
             grid.attach(distbox, 0, 4, 4, 1)
             grid.attach(speedbox, 0, 5, 4, 1)
@@ -210,6 +208,11 @@ class Panel(ScreenPanel):
         self._screen.show_popup_message(f'Syncing Tool T{self.speed}')
         self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": f"SYNC_TOOL TOOL={self.speed}"})
+
+    def desync_all_tools(self, widget):
+        self._screen.show_popup_message(f'Desyncing All Tools')
+        self._screen._send_action(widget, "printer.gcode.script",
+                                        {"script": f"DESYNC_ALL_TOOLS"})
 
     def process_update(self, action, data):
         if action == "notify_gcode_response":
