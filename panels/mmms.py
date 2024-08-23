@@ -205,12 +205,12 @@ class Panel(ScreenPanel):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
     
     def sync_tool(self, widget):
-        self._screen.show_popup_message(f'Syncing Tool T{self.speed}')
+        self._screen.show_popup_message(f'Syncing Tool T{self.speed}', 1)
         self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": f"SYNC_TOOL TOOL={self.speed}"})
 
     def desync_all_tools(self, widget):
-        self._screen.show_popup_message(f'Desyncing All Tools')
+        self._screen.show_popup_message(f'Desyncing All Tools', 1)
         self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": f"DESYNC_ALL_TOOLS"})
 
