@@ -222,7 +222,7 @@ class Panel(ScreenPanel):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
         self._screen.init_klipper()
         self.buttons['reload'].set_label('Reloaded')
-        self.mmms_settings = self._printer.data['configfile']['config']['gcode_macro MMMS_SETTINGS']
+        self.mmms_settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
         logging.info(self.mmms_settings)
         self.change_selected_tool(None, 0)
     
