@@ -18,7 +18,7 @@ class Panel(ScreenPanel):
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
         macros = self._printer.get_config_section_list("gcode_macro ")
 
-        logging.info(f"3MS LOG: Settings = {self._printer.get_stat('gcode_macro MMMS_SETTINGS')}")
+        logging.info(f"3MS LOG: Settings = {self.get_mmms_options()}")
 
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
@@ -203,6 +203,11 @@ class Panel(ScreenPanel):
             if button in ("pressure", "retraction", "spoolman", "temperature"):
                 continue
             self.buttons[button].set_sensitive(enable)
+    
+    def get_mmms_options(self):
+        index = "3ms "
+        items = [i[len(index):] for i in self._screen._config.config.sections() if i.startswith(index)]
+        return {item: self._screen._config._build_preheat_item(index + item) for item in items}
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
