@@ -212,9 +212,8 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['unload'], 2, 2, 1, 1)
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
-            grid.attach(speedbox, 1, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
-            grid.attach(self.buttons['reload'], 0, 4, 2, 1)
+            grid.attach(speedbox, 0, 4, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
 
         self.menu = ['extrude_menu']
