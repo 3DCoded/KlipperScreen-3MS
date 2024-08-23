@@ -13,7 +13,7 @@ class Panel(ScreenPanel):
     distance = distances[-2]
 
     def __init__(self, screen, title):
-        title = title or _("Moving")
+        title = title or _("Move")
         super().__init__(screen, title)
 
         if self.ks_printer_cfg is not None:
@@ -27,7 +27,7 @@ class Panel(ScreenPanel):
         self.settings = {}
         self.menu.append("move_menu")
         self.buttons = {
-            "x+": self._gtk.Button("arrow-right", "X+", "color1"),
+            "x+": self._gtk.Button("arrow-right", "X More", "color1"),
             "x-": self._gtk.Button("arrow-left", "X-", "color1"),
             "y+": self._gtk.Button("arrow-up", "Y+", "color2"),
             "y-": self._gtk.Button("arrow-down", "Y-", "color2"),
