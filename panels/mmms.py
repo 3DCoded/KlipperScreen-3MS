@@ -337,7 +337,7 @@ class Panel(ScreenPanel):
     def extrude(self, widget, direction):
         self._screen._ws.klippy.gcode_script(KlippyGcodes.EXTRUDE_REL)
         self._screen._send_action(widget, "printer.gcode.script",
-                                  {"script": f"G1 E{direction}{self.distance} F{self.selected_tool * 60}"})
+                                  {"script": f"G1 E{direction}{self.distance} F{self.speed * 60}"})
 
     def load_unload(self, widget, direction):
         if direction == "-":
