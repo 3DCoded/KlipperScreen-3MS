@@ -25,7 +25,8 @@ class Panel(ScreenPanel):
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
 
         self.tools = list(map(str, range(self.config_tools)))
-        self.distances = ['5', '10', '15', '25']
+        self.speeds = ['5', '10', '50', '100', '150']
+        self.distances = ['5', '10', '50', '100', '200']
         if self.ks_printer_cfg is not None:
             dis = self.ks_printer_cfg.get("extrude_distances", '')
             if re.match(r'^[0-9,\s]+$', dis):
@@ -37,6 +38,7 @@ class Panel(ScreenPanel):
                 vel = [str(i.strip()) for i in vel.split(',')]
                 if 1 < len(vel) < 5:
                     self.tools = vel
+        self.speed = int(self.speeds[1])
         self.distance = int(self.distances[1])
         self.selected_tool = int(self.tools[1])
         self.buttons = {
@@ -110,6 +112,18 @@ class Panel(ScreenPanel):
         if i < (limit - 1) and self._printer.spoolman:
             xbox.add(self.buttons['spoolman'])
 
+        speedgrid = Gtk.Grid()
+        for j, i in enumerate(self.speeds):
+            self.labels[f"speed{i}"] = self._gtk.Button(label=i)
+            self.labels[f"speed{i}"].connect("clicked", self.change_speed, int(i))
+            ctx = self.labels[f"speed{i}"].get_style_context()
+            ctx.add_class("horizontal_togglebuttons")
+            if self._screen.vertical_mode:
+                ctx.add_class("horizontal_togglebuttons_smaller")
+            if int(i) == self.distance:
+                ctx.add_class("horizontal_togglebuttons_active")
+            speedgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
+
         distgrid = Gtk.Grid()
         for j, i in enumerate(self.distances):
             self.labels[f"dist{i}"] = self._gtk.Button(label=i)
@@ -124,16 +138,20 @@ class Panel(ScreenPanel):
 
         selectgrid = Gtk.Grid()
         for j, i in enumerate(self.tools):
-            self.labels[f"speed{i}"] = self._gtk.Button(label=i)
-            self.labels[f"speed{i}"].connect("clicked", self.change_selected_tool, int(i))
-            ctx = self.labels[f"speed{i}"].get_style_context()
+            self.labels[f"tool{i}"] = self._gtk.Button(label=i)
+            self.labels[f"tool{i}"].connect("clicked", self.change_selected_tool, int(i))
+            ctx = self.labels[f"tool{i}"].get_style_context()
             ctx.add_class("horizontal_togglebuttons")
             if self._screen.vertical_mode:
                 ctx.add_class("horizontal_togglebuttons_smaller")
             if int(i) == self.selected_tool:
                 ctx.add_class("horizontal_togglebuttons_active")
-            selectgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
+            selectgrid.attach(self.labels[f"tool{i}"], j, 0, 1, 1)
 
+        speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.labels['extrude_speed'] = Gtk.label('Speed (mm/s)')
+        speedbox.pack_start(self.labels['extrude_speed'], True, True, 0)
+        speedbox.add(speedgrid)
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_dist'] = Gtk.Label(_("Distance (mm)"))
         distbox.pack_start(self.labels['extrude_dist'], True, True, 0)
@@ -194,6 +212,7 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['unload'], 2, 2, 1, 1)
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
+            grid.attach(speedbox, 1, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
             grid.attach(self.buttons['reload'], 0, 4, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
@@ -279,6 +298,12 @@ class Panel(ScreenPanel):
         self.labels[f"dist{self.distance}"].get_style_context().remove_class("horizontal_togglebuttons_active")
         self.labels[f"dist{distance}"].get_style_context().add_class("horizontal_togglebuttons_active")
         self.distance = distance
+    
+    def change_speed(self, widget, speed):
+        logging.info(f"### Speed {speed}")
+        self.labels[f"speed{self.speed}"].get_style_context().remove_class("horizontal_togglebuttons_active")
+        self.labels[f"speed{speed}"].get_style_context().add_class("horizontal_togglebuttons_active")
+        self.speed = speed
 
     def change_extruder(self, widget, extruder):
         logging.info(f"Changing extruder to {extruder}")
@@ -289,9 +314,9 @@ class Panel(ScreenPanel):
                                   {"script": f"T{self._printer.get_tool_number(extruder)}"})
 
     def change_selected_tool(self, widget, selected):
-        logging.info(f"### Speed {selected}")
-        self.labels[f"speed{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
-        self.labels[f"speed{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
+        logging.info(f"### Selected Tool {selected}")
+        self.labels[f"tool{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
+        self.labels[f"tool{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
         self.selected_tool = selected
 
     def check_min_temp(self, widget, method, direction):
