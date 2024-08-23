@@ -210,7 +210,7 @@ class Panel(ScreenPanel):
         if '3ms' not in config:
             return {'tools': 2}
         cfg = config['3ms']
-        return cfg.getint('tools', 2)
+        return {'tools': cfg.getint('tools': 2)}
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
