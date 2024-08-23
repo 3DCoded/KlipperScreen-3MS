@@ -299,10 +299,10 @@ class Panel(ScreenPanel):
     def load_unload(self, widget, direction):
         if direction == "-":
             self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": f"RESPOND MSG=\"MMMS_UNLOAD\""})
+                                        {"script": "MMMS_UNLOAD"})
         if direction == "+":
             self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": f"RESPOND MSG=\"MMMS_LOAD\""})
+                                        {"script": "MMMS_LOAD"})
 
     def enable_disable_fs(self, switch, gparams, name, x):
         if switch.get_active():
