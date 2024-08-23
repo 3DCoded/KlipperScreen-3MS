@@ -18,12 +18,13 @@ class Panel(ScreenPanel):
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
         macros = self._printer.get_config_section_list("gcode_macro ")
 
-        logging.info(f"3MS LOG: Settings = {self.get_mmms_options()}")
+        self.config_options = self.get_mmms_options()
+        self.config_tools = self.config_options['tools']
 
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
 
-        self.tools = list(map(str, range(self._printer.extrudercount)))
+        self.tools = list(map(str, range(self.config_tools)))
         self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
             dis = self.ks_printer_cfg.get("extrude_distances", '')
