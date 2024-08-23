@@ -97,7 +97,7 @@ class Panel(ScreenPanel):
         if self._printer.extrudercount >= limit:
             changer = self._gtk.Button("toolchanger")
             changer.connect("clicked", self.load_menu, 'extruders', _('Extruders'))
-            xbox.add(self._gtk.Label('3MS Control'))
+            xbox.add(self.Gtk.Label('3MS Control'))
             self.labels["current_extruder"] = self._gtk.Button("extruder", "")
             xbox.add(self.labels["current_extruder"])
             self.labels["current_extruder"].connect("clicked", self.load_menu, 'extruders', _('Extruders'))
