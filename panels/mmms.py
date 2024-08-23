@@ -220,6 +220,7 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
+        logging.info(dir(self.buttons['reload']))
         self.change_selected_tool(None, 0)
     
     def sync_tool(self, widget):
