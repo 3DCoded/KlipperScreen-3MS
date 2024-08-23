@@ -193,6 +193,10 @@ class KlipperScreenConfig:
                     or section.startswith('displayed_macros')\
                     or section.startswith('spoolman'):
                 bools = [f'{option}' for option in config[section]]
+            elif section == '3ms':
+                bools = tuple()
+                strs = tuple()
+                numbers = ('tools',)
             else:
                 self.errors.append(f'Section [{section}] not recognized')
 
