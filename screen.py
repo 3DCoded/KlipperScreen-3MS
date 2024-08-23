@@ -280,6 +280,9 @@ class KlipperScreen(Gtk.Window):
                 "exclude_object": ["current_object", "objects", "excluded_objects"],
                 "manual_probe": ['is_active'],
                 "screws_tilt_adjust": ['results', 'error'],
+                # 3MS
+                "gcode_macro MMMS_SETTINGS": ['variable_load_distance', 'variable_unload_distance'],
+                "save_variables": ['variables']
             }
         }
         for extruder in self.printer.get_tools():
@@ -299,6 +302,10 @@ class KlipperScreen(Gtk.Window):
             requested_updates['objects'][p] = ["value"]
         for led in self.printer.get_leds():
             requested_updates['objects'][led] = ["color_data"]
+        
+        # 3MS
+        requested_updates['gcode_macro MMMS_SETTINGS'][list(self.printer.config)['gcode_macro MMMS_SETTINGS']] = ['variable_load_distance', 'variable_unload_distance']
+        requested_updates['save_variables'][list(self.printer.config)['save_variables']] = ['variables']
 
         self._ws.klippy.object_subscription(requested_updates)
 
