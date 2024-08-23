@@ -27,7 +27,7 @@ class Panel(ScreenPanel):
         self.settings = {}
         self.menu.append("move_menu")
         self.buttons = {
-            "x+": self._gtk.Button("arrow-right", "X More", "color1"),
+            "x+": self._gtk.Button("arrow-right", "X+", "color1"),
             "x-": self._gtk.Button("arrow-left", "X-", "color1"),
             "y+": self._gtk.Button("arrow-up", "Y+", "color2"),
             "y-": self._gtk.Button("arrow-down", "Y-", "color2"),
