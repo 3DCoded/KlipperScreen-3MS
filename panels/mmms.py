@@ -42,7 +42,7 @@ class Panel(ScreenPanel):
             'retract': self._gtk.Button("retract", _("Retract"), "color1"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
-            'pressure': self._gtk.Button("settings", _("Pressure Advance"), "color2"),
+            'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'retraction': self._gtk.Button("settings", _("Retraction"), "color1")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
@@ -55,9 +55,7 @@ class Panel(ScreenPanel):
         self.buttons['spoolman'].connect("clicked", self.menu_item_clicked, {
             "panel": "spoolman"
         })
-        self.buttons['pressure'].connect("clicked", self.menu_item_clicked, {
-            "panel": "pressure_advance"
-        })
+        self.buttons['sync'].connect("clicked", self.sync_tool)
         self.buttons['retraction'].connect("clicked", self.menu_item_clicked, {
             "panel": "retraction"
         })
@@ -98,7 +96,7 @@ class Panel(ScreenPanel):
             xbox.add(self.labels["current_extruder"])
             self.labels["current_extruder"].connect("clicked", self.load_menu, 'extruders', _('Extruders'))
         if not self._screen.vertical_mode:
-            xbox.add(self.buttons['pressure'])
+            xbox.add(self.buttons['sync'])
             i += 1
         if self._printer.get_config_section("firmware_retraction") and not self._screen.vertical_mode:
             xbox.add(self.buttons['retraction'])
@@ -179,7 +177,7 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['load'], 0, 2, 2, 1)
             grid.attach(self.buttons['unload'], 2, 2, 2, 1)
             settings_box = Gtk.Box(homogeneous=True)
-            settings_box.add(self.buttons['pressure'])
+            settings_box.add(self.buttons['sync'])
             if self._printer.get_config_section("firmware_retraction"):
                 settings_box.add(self.buttons['retraction'])
             grid.attach(settings_box, 0, 3, 4, 1)
@@ -207,6 +205,11 @@ class Panel(ScreenPanel):
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
+    
+    def sync_tool(self, widget):
+        self._screen.show_popup_message(f'Syncing Tool T{self.speed}')
+        self._screen._send_action(widget, "printer.gcode.script",
+                                        {"script": f"SYNC_TOOL TOOL={self.speed}"})
 
     def process_update(self, action, data):
         if action == "notify_gcode_response":
