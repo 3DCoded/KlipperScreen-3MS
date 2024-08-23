@@ -17,6 +17,10 @@ class Panel(ScreenPanel):
         super().__init__(screen, title)
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
         macros = self._printer.get_config_section_list("gcode_macro ")
+
+        for macro in macros:
+            logging.log(f'3MS LOG: Macro {dir(macro)}')
+            break
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
 
