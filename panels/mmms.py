@@ -149,7 +149,7 @@ class Panel(ScreenPanel):
             selectgrid.attach(self.labels[f"tool{i}"], j, 0, 1, 1)
 
         speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.labels['extrude_speed'] = Gtk.label('Speed (mm/s)')
+        self.labels['extrude_speed'] = Gtk.Label('Speed (mm/s)')
         speedbox.pack_start(self.labels['extrude_speed'], True, True, 0)
         speedbox.add(speedgrid)
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
