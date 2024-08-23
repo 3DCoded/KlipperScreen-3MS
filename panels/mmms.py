@@ -47,7 +47,8 @@ class Panel(ScreenPanel):
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
-            'desync_all': self._gtk.Button("cancel", _("Desync Tool"), "color1")
+            'desync_all': self._gtk.Button("cancel", _("Desync Tool"), "color1"),
+            'reload': self._gtk.Button('reload', 'Reload', 'color1')
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -61,6 +62,7 @@ class Panel(ScreenPanel):
         })
         self.buttons['sync'].connect("clicked", self.sync_tool)
         self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
+        self.buttons['reload'].connect("clicked", self.reload)
 
         xbox = Gtk.Box(homogeneous=True)
         limit = 4
@@ -120,17 +122,17 @@ class Panel(ScreenPanel):
                 ctx.add_class("horizontal_togglebuttons_active")
             distgrid.attach(self.labels[f"dist{i}"], j, 0, 1, 1)
 
-        speedgrid = Gtk.Grid()
+        selectgrid = Gtk.Grid()
         for j, i in enumerate(self.tools):
             self.labels[f"speed{i}"] = self._gtk.Button(label=i)
-            self.labels[f"speed{i}"].connect("clicked", self.change_speed, int(i))
+            self.labels[f"speed{i}"].connect("clicked", self.change_selected_tool, int(i))
             ctx = self.labels[f"speed{i}"].get_style_context()
             ctx.add_class("horizontal_togglebuttons")
             if self._screen.vertical_mode:
                 ctx.add_class("horizontal_togglebuttons_smaller")
             if int(i) == self.selected_tool:
                 ctx.add_class("horizontal_togglebuttons_active")
-            speedgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
+            selectgrid.attach(self.labels[f"speed{i}"], j, 0, 1, 1)
 
         distbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['extrude_dist'] = Gtk.Label(_("Distance (mm)"))
@@ -139,7 +141,7 @@ class Panel(ScreenPanel):
         selectbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['tool_selection'] = Gtk.Label(_("Select Tool"))
         selectbox.pack_start(self.labels['tool_selection'], True, True, 0)
-        selectbox.add(speedgrid)
+        selectbox.add(selectgrid)
 
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
@@ -193,6 +195,7 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
+            grid.attach(self.buttons['reload'], 0, 4, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
 
         self.menu = ['extrude_menu']
@@ -214,6 +217,10 @@ class Panel(ScreenPanel):
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
+    
+    def reload(self, widget):
+        self._screen.show_popup_message('Reloading 3MS Control', 1)
+        self.change_selected_tool(None, 0)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
@@ -281,11 +288,11 @@ class Panel(ScreenPanel):
         self._screen._send_action(widget, "printer.gcode.script",
                                   {"script": f"T{self._printer.get_tool_number(extruder)}"})
 
-    def change_speed(self, widget, speed):
-        logging.info(f"### Speed {speed}")
+    def change_selected_tool(self, widget, selected):
+        logging.info(f"### Speed {selected}")
         self.labels[f"speed{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
-        self.labels[f"speed{speed}"].get_style_context().add_class("horizontal_togglebuttons_active")
-        self.selected_tool = speed
+        self.labels[f"speed{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
+        self.selected_tool = selected
 
     def check_min_temp(self, widget, method, direction):
         temp = float(self._printer.get_stat(self.current_extruder, 'temperature'))
