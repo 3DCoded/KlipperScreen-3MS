@@ -20,7 +20,7 @@ class Panel(ScreenPanel):
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
 
-        self.speeds = ['1', '2', '5', '25']
+        self.tools = ['0', '1', '2']
         self.distances = ['5', '10', '15', '25']
         if self.ks_printer_cfg is not None:
             dis = self.ks_printer_cfg.get("extrude_distances", '')
@@ -32,9 +32,9 @@ class Panel(ScreenPanel):
             if re.match(r'^[0-9,\s]+$', vel):
                 vel = [str(i.strip()) for i in vel.split(',')]
                 if 1 < len(vel) < 5:
-                    self.speeds = vel
+                    self.tools = vel
         self.distance = int(self.distances[1])
-        self.speed = int(self.speeds[1])
+        self.speed = int(self.tools[1])
         self.buttons = {
             'extrude': self._gtk.Button("extrude", _("Extrude"), "color4"),
             'load': self._gtk.Button("arrow-down", _("Load"), "color3"),
@@ -121,7 +121,7 @@ class Panel(ScreenPanel):
             distgrid.attach(self.labels[f"dist{i}"], j, 0, 1, 1)
 
         speedgrid = Gtk.Grid()
-        for j, i in enumerate(self.speeds):
+        for j, i in enumerate(self.tools):
             self.labels[f"speed{i}"] = self._gtk.Button(label=i)
             self.labels[f"speed{i}"].connect("clicked", self.change_speed, int(i))
             ctx = self.labels[f"speed{i}"].get_style_context()
