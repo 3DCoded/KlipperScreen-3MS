@@ -136,10 +136,10 @@ class Panel(ScreenPanel):
         self.labels['extrude_dist'] = Gtk.Label(_("Distance (mm)"))
         distbox.pack_start(self.labels['extrude_dist'], True, True, 0)
         distbox.add(distgrid)
-        speedbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        selectbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.labels['tool_selection'] = Gtk.Label(_("Select Tool"))
-        speedbox.pack_start(self.labels['tool_selection'], True, True, 0)
-        speedbox.add(speedgrid)
+        selectbox.pack_start(self.labels['tool_selection'], True, True, 0)
+        selectbox.add(speedgrid)
 
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
@@ -184,7 +184,7 @@ class Panel(ScreenPanel):
                 settings_box.add(self.buttons['desync_all'])
             grid.attach(settings_box, 0, 3, 4, 1)
             grid.attach(distbox, 0, 4, 4, 1)
-            grid.attach(speedbox, 0, 5, 4, 1)
+            grid.attach(selectbox, 0, 5, 4, 1)
             grid.attach(sensors, 0, 6, 4, 1)
         else:
             grid.attach(self.buttons['extrude'], 0, 2, 1, 1)
@@ -192,7 +192,7 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['unload'], 2, 2, 1, 1)
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
-            grid.attach(speedbox, 2, 3, 2, 1)
+            grid.attach(selectbox, 2, 3, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
 
         self.menu = ['extrude_menu']
@@ -221,9 +221,9 @@ class Panel(ScreenPanel):
                                         {"script": f"SYNC_TOOL TOOL={self.selected_tool}"})
 
     def desync_all_tools(self, widget):
-        self._screen.show_popup_message(f'Desyncing All Tools', 1)
+        self._screen.show_popup_message('Desyncing All Tools', 1)
         self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": f"DESYNC_ALL_TOOLS"})
+                                        {"script": "DESYNC_ALL_TOOLS"})
 
     def process_update(self, action, data):
         if action == "notify_gcode_response":
