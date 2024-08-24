@@ -596,6 +596,11 @@ class KlipperScreen(Gtk.Window):
             if not home:
                 break
         self.attach_panel(self._cur_panels[-1])
+    
+    def _menu_go_to(self, widget, panel_name, title): # 3MS Added, Based on HappyHare
+        logging.info(f"#### Menu go_to {panel_name}")
+        self._menu_go_back(widget, home=True)
+        self.show_panel(panel_name, title, remove_all=False)
 
     def reset_screensaver_timeout(self, *args):
         if self.screensaver_timeout is not None:
