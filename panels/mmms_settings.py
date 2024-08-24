@@ -61,7 +61,8 @@ class Panel(ScreenPanel):
         self.content.show_all()
 
     def activate(self):
-        self._screen._ws.klippy.gcode_script("GET_RETRACTION")
+        # self._screen._ws.klippy.gcode_script("GET_RETRACTION")
+        pass
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "firmware_retraction" in data:
