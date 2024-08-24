@@ -19,10 +19,10 @@ class Panel(ScreenPanel):
 
         logging.info(conf)
 
-        retract_length = float(conf['load_distance']) if 'load_distance' in conf else 0
-        retract_speed = int(float((conf['load_speed']))) if 'load_speed' in conf else 20
-        unretract_extra_length = float(conf['unload_distance']) if 'unload_distance' in conf else 0
-        unretract_speed = int(float((conf['unload_speed']))) if 'unload_speed' in conf else 10
+        retract_length = float(conf['variable_load_distance']) if 'variable_load_distance' in conf else 110
+        retract_speed = int(float((conf['variable_load_speed']))) if 'variable_load_speed' in conf else 4500
+        unretract_extra_length = float(conf['variable_unload_distance']) if 'variable_unload_distance' in conf else 100
+        unretract_speed = int(float((conf['variable_unload_speed']))) if 'variable_unload_speed' in conf else 6000
         maxlength = retract_length * 1.2 if retract_length >= 6 else 6
         maxspeed = retract_speed * 1.2 if retract_speed >= 100 else 100
 
