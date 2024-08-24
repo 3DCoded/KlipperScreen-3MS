@@ -2,9 +2,27 @@
 
 ### NOTE
 
-This fork of KlipperScreen is in development.
+This fork of KlipperScreen is in alpha.
 
 ---
+
+KlipperScreen for 3MS is a fork of KlipperScreen designed for use with the [3MS](https://github.com/3DCoded/3MS) modular multimaterial system. This fork is also based on the [Happy Hare](https://github.com/moggieuk/KlipperScreen-Happy-Hare-Edition) fork of KlipperScreen.
+
+## Screenshots
+
+![](images/home.png)
+![](images/main.png)
+![](images/settings.png)
+
+## Install
+
+**UNDER CONSTRUCTION!**
+
+See the [Documentation](https://3dcoded.github.io/3MS/setup/KlipperScreen).
+
+---
+
+# Original README
 
 KlipperScreen is a touchscreen GUI that interfaces with [Klipper](https://github.com/Klipper3d/klipper) via [Moonraker](https://github.com/arksine/moonraker). It allows you to switch between multiple printers and access them from a single location. Notably, it doesn't need to run on the same host as your printer; you can install it on another device and configure the IP address to connect to the printer.
 
