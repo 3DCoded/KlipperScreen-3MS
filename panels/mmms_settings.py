@@ -56,11 +56,11 @@ class Panel(ScreenPanel):
         for opt in self.options:
             self.add_option(opt['option'], opt['name'], opt['units'], opt['value'], opt['digits'], opt["maxval"])
 
+        self.reload_btn = self._gtk.Button("refresh", "Reload", "color1")
+        self.grid.attach(self.reload_btn, 0, len(self.options)+1, 1, 1)
+
         scroll = self._gtk.ScrolledWindow()
         scroll.add(self.grid)
-
-        self.reload_btn = self._gtk.Button("refresh", "Reload", "color1")
-        scroll.add(self.reload_btn)
 
         self.content.add(scroll)
         self.content.show_all()
