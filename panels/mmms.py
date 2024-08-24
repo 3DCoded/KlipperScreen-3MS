@@ -52,7 +52,8 @@ class Panel(ScreenPanel):
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'reload': self._gtk.Button('reload', 'Reload', 'color1'),
-            'settings': self._gtk.Button('settings', 'Settings', "color2")
+            'settings': self._gtk.Button('settings', 'Settings', "color1"),
+            'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -69,6 +70,7 @@ class Panel(ScreenPanel):
         })
         self.buttons['sync'].connect("clicked", self.sync_tool)
         self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
+        self.buttons['clear_tool'].connect("clicked", self.clear_tool)
         self.buttons['reload'].connect("clicked", self.reload)
 
         xbox = Gtk.Box(homogeneous=True)
@@ -99,9 +101,11 @@ class Panel(ScreenPanel):
         if not self._screen.vertical_mode:
             xbox.add(self.buttons['sync'])
             i += 1
-        if self._printer.get_config_section("firmware_retraction") and not self._screen.vertical_mode:
+        if not self._screen.vertical_mode:
             xbox.add(self.buttons['desync_all'])
             i += 1
+        if not self._screen.vertical_mode:
+            xbox.add(self.buttons['clear_tool'])
         if i < limit:
             xbox.add(self.buttons['temperature'])
         if i < (limit - 1) and self._printer.spoolman:
@@ -262,6 +266,11 @@ class Panel(ScreenPanel):
         self._screen.show_popup_message('Desyncing All Tools', 1)
         self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": "DESYNC_ALL_TOOLS"})
+    
+    def clear_tool(self, widget):
+        self._screen.show_popup_message('Clearing Tool', 1)
+        self._screen._send_action(widget, "printer.gcode.script",
+                                        {"script": "CLEAR_TOOL"})
 
     def process_update(self, action, data):
         if action == "notify_gcode_response":
