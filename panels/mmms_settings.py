@@ -64,7 +64,7 @@ class Panel(ScreenPanel):
         self.content.add(scroll)
         self.content.show_all()
 
-    def reload(self):
+    def reload(self, widget):
         self._screen.init_klipper()
         self._screen.show_popup_message('Reloading', 1)
         settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
