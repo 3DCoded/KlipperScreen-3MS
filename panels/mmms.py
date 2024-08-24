@@ -251,8 +251,7 @@ class Panel(ScreenPanel):
         status = f'Current Tool: T{previous_tool}' if previous_tool > -1 else 'No Tool Loaded'
         self.buttons['status'].set_label(status)
 
-        if synced_tool > -1:
-            self.change_selected_tool(None, synced_tool)
+        self.change_selected_tool(None, synced_tool)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
@@ -329,6 +328,8 @@ class Panel(ScreenPanel):
     def change_selected_tool(self, widget, selected):
         logging.info(f"### Selected Tool {selected}")
         self.labels[f"tool{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
+        if selected == -1:
+            return
         self.labels[f"tool{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
         self.selected_tool = selected
 
