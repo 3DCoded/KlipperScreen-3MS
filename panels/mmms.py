@@ -159,7 +159,7 @@ class Panel(ScreenPanel):
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
 
-        self.labels['status'] = Gtk.Label("Status")
+        self.labels['status'] = Gtk.Label("Status Loading...")
         sensors.attach(self.labels['status'], 0, 0, 1, 1)
 
         with_switches = (
@@ -219,6 +219,11 @@ class Panel(ScreenPanel):
         self.menu = ['extrude_menu']
         self.labels['extrude_menu'] = grid
         self.content.add(self.labels['extrude_menu'])
+    
+    def process_update(self, action, data):
+        if action == "notify_status_update" and "save_variables" in data:
+            new_data = data['save_variables']
+            logging.info(new_data)
 
     def enable_buttons(self, enable):
         for button in self.buttons:
