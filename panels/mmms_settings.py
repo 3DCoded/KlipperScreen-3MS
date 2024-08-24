@@ -17,6 +17,8 @@ class Panel(ScreenPanel):
         self.list = {}
         conf = self._printer.get_config_section("gcode_macro MMMS_SETTINGS")
 
+        logging.info(conf)
+
         retract_length = float(conf['load_distance']) if 'load_distance' in conf else 0
         retract_speed = int(float((conf['load_speed']))) if 'load_speed' in conf else 20
         unretract_extra_length = float(conf['unload_distance']) if 'unload_distance' in conf else 0
