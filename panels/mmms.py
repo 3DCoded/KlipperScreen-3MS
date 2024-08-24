@@ -240,8 +240,8 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
-        data = copy.copy(logging.info(self._printer.data))
-        del data['configfile']
+        data = copy.copy(self._printer.data)
+        data['configfile'] = {}
         logging.info(data)
         self.buttons['reload'].set_label('Reloaded')
     
