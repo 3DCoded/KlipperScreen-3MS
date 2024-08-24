@@ -68,9 +68,9 @@ class Panel(ScreenPanel):
         self._screen.init_klipper()
 
     def activate(self):
-        # self._screen._ws.klippy.gcode_script("GET_RETRACTION")
+        self._screen._ws.klippy.gcode_script("GET_RETRACTION")
         # self._screen.init_klipper()
-        pass
+        # pass
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
