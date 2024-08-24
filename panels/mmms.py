@@ -159,8 +159,9 @@ class Panel(ScreenPanel):
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
 
-        self.labels['status'] = Gtk.Label("Status Loading...")
-        sensors.attach(self.labels['status'], 0, 0, 1, 1)
+        self.buttons['status'] = self._gtk.Button("", "Status Loading...", "color1")
+        self.buttons['status'].connect("clicked", self.reload)
+        sensors.attach(self.buttons['status'], 0, 0, 1, 1)
 
         with_switches = (
             len(filament_sensors) < 4
@@ -243,8 +244,8 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.init_klipper() # Reload Klipper
-        settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
-        logging.info(settings)
+        save_variables = self._printer.get_stat('save_variables')
+        logging.info(save_variables)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
