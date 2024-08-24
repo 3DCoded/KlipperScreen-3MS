@@ -81,6 +81,7 @@ class BasePanel(ScreenPanel):
         self.action_bar.set_size_request(self._gtk.action_bar_width, self._gtk.action_bar_height)
         self.action_bar.add(self.control['back'])
         self.action_bar.add(self.control['home'])
+        self.action_bar.add(self.control['mmms_shortcut'])
         self.action_bar.add(self.control['printer_select'])
         self.action_bar.add(self.control['shortcut'])
         self.action_bar.add(self.control['estop'])
@@ -211,6 +212,7 @@ class BasePanel(ScreenPanel):
         self.control['estop'].set_visible(printing)
         self.control['shutdown'].set_visible(not printing)
         self.show_shortcut(connected)
+        self.show_mmms_shortcut(connected and self._config.get_main_config().getboolean('side_mmms_shortcut', True)) # 3MS
         self.show_heaters(connected)
         self.show_printer_select(len(self._config.get_printers()) > 1)
         for control in ('back', 'home'):
@@ -314,6 +316,10 @@ class BasePanel(ScreenPanel):
         self.control['shortcut'].set_visible(show)
         self.set_control_sensitive(self._screen._cur_panels[-1] != self.shorcut['panel'])
         self.set_control_sensitive(self._screen._cur_panels[-1] != self.shutdown['panel'], control='shutdown')
+
+    def show_mmms_shortcut(self, show=True): # 3MS
+        self.control['mmms_shortcut'].set_visible(show)
+        self.set_control_sensitive(self._screen._cur_panels[-1] != self.mmms_shortcut['panel'], control='mmms_shortcut')
 
     def show_printer_select(self, show=True):
         self.control['printer_select'].set_visible(
