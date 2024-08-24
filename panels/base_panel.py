@@ -52,6 +52,19 @@ class BasePanel(ScreenPanel):
         self.control['shortcut'].connect("clicked", self.menu_item_clicked, self.shorcut)
         self.control['shortcut'].set_no_show_all(True)
 
+        # 3MS START
+
+        self.mmms_shortcut = {
+            "name": "3MS",
+            "panel": "mmms",
+            "icon": "3ms"
+        }
+        self.control['mmms_shortcut'] = self._gtk.Button(self.mmms_shortcut['icon'], scale=abscale)
+        self.control['mmms_shortcut'].connect("clicked", self._screen._menu_go_to, 'mmms', "3MS")
+        self.control['mmms_shortcut'].set_no_show_all(True)
+
+        # 3MS END
+
         # Any action bar button should close the keyboard
         for item in self.control:
             self.control[item].connect("clicked", self._screen.remove_keyboard)
