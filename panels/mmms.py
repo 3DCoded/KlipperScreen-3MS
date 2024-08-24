@@ -213,7 +213,8 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
-            grid.attach(speedbox, 0, 4, 2, 1)
+            grid.attach(self.buttons['reload'], 0, 4, 2, 1)
+            # grid.attach(speedbox, 0, 4, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
 
         self.menu = ['extrude_menu']
@@ -238,6 +239,7 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
+        logging.info(self._printer.data)
         self.buttons['reload'].set_label('Reloaded')
     
     def sync_tool(self, widget):
