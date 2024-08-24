@@ -48,7 +48,6 @@ class Panel(ScreenPanel):
             'unload': self._gtk.Button("arrow-up", _("Unload"), "color2"),
             'retract': self._gtk.Button("retract", _("Retract"), "color1"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
-            'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'reload': self._gtk.Button('reload', 'Reload', 'color1'),
@@ -61,9 +60,6 @@ class Panel(ScreenPanel):
         self.buttons['retract'].connect("clicked", self.check_min_temp, "extrude", "-")
         self.buttons['temperature'].connect("clicked", self.menu_item_clicked, {
             "panel": "temperature"
-        })
-        self.buttons['spoolman'].connect("clicked", self.menu_item_clicked, {
-            "panel": "spoolman"
         })
         self.buttons['settings'].connect("clicked", self.menu_item_clicked, {
             "panel": "mmms_settings"
@@ -224,15 +220,10 @@ class Panel(ScreenPanel):
         self.menu = ['extrude_menu']
         self.labels['extrude_menu'] = grid
         self.content.add(self.labels['extrude_menu'])
-    
-    def process_update(self, action, data):
-        if action == "notify_status_update" and "save_variables" in data:
-            new_data = data['save_variables']
-            logging.info(new_data)
 
     def enable_buttons(self, enable):
         for button in self.buttons:
-            if button in ("pressure", "retraction", "spoolman", "temperature"):
+            if button in ("pressure", "retraction", "spoolman", "temperature", "settings", "clear_tool", "desync_all", "sync", "status", "reload"):
                 continue
             self.buttons[button].set_sensitive(enable)
     
@@ -273,6 +264,9 @@ class Panel(ScreenPanel):
                                         {"script": "CLEAR_TOOL"})
 
     def process_update(self, action, data):
+        if action == "notify_status_update" and "save_variables" in data:
+            new_data = data['save_variables']
+            logging.info(new_data)
         if action == "notify_gcode_response":
             if "action:cancel" in data or "action:paused" in data:
                 self.enable_buttons(True)
