@@ -21,13 +21,13 @@ class Panel(ScreenPanel):
         unload_distance = int(float((conf['unload_distance']))) if 'unload_distance' in conf else 100
         load_speed = float(conf['load_speed']) if 'load_speed' in conf else 4500
         unload_speed = int(float((conf['unload_speed']))) if 'unload_speed' in conf else 6000
-        maxlength = load_distance * 1.2 if load_distance >= 6 else 6
-        maxspeed = unload_distance * 1.2 if unload_distance >= 100 else 100
-
+        maxlength = 500
+        maxspeed = 250
+        
         self.options = [
             {"name": _("Load Distance"),
              "units": _("mm"),
-             "option": "retract_length",
+             "option": "load_distance",
              "value": load_distance,
              "digits": 0,
              "maxval": maxlength},
@@ -36,13 +36,13 @@ class Panel(ScreenPanel):
              "option": "unload_distance",
              "value": unload_distance,
              "digits": 0,
-             "maxval": maxspeed},
+             "maxval": maxlength},
             {"name": _("Load Speed"),
              "units": _("mm"),
              "option": "load_speed",
              "value": load_speed,
              "digits": 0,
-             "maxval": maxlength},
+             "maxval": maxspeed},
             {"name": _("Unload Speed"),
              "units": _("mm/s"),
              "option": "unload_speed",
