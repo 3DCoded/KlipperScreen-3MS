@@ -65,10 +65,10 @@ class Panel(ScreenPanel):
         pass
 
     def process_update(self, action, data):
-        if action == "notify_status_update" and "firmware_retraction" in data:
+        if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
             for opt in self.list:
-                if opt in data["firmware_retraction"]:
-                    self.update_option(opt, data["firmware_retraction"][opt])
+                if opt in data["gcode_macro MMMS_SETTINGS"]:
+                    self.update_option(opt, data["gcode_macro MMMS_SETTINGS"][opt])
 
     def update_option(self, option, value):
         if option not in self.list:
