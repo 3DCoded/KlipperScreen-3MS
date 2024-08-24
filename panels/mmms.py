@@ -240,6 +240,7 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.show_popup_message('Reloading 3MS Control', 1)
+        self._screen.init_klipper()
         data = copy.copy(self._printer.data)
         data['configfile'] = {}
         logging.info(data)
