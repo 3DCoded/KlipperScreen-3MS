@@ -17,38 +17,36 @@ class Panel(ScreenPanel):
         self.list = {}
         conf = self._printer.get_config_section("gcode_macro MMMS_SETTINGS")
 
-        logging.info(conf)
-
-        retract_length = float(conf['variable_load_distance']) if 'variable_load_distance' in conf else 110
-        retract_speed = int(float((conf['variable_load_speed']))) if 'variable_load_speed' in conf else 4500
-        unretract_extra_length = float(conf['variable_unload_distance']) if 'variable_unload_distance' in conf else 100
-        unretract_speed = int(float((conf['variable_unload_speed']))) if 'variable_unload_speed' in conf else 6000
-        maxlength = retract_length * 1.2 if retract_length >= 6 else 6
-        maxspeed = retract_speed * 1.2 if retract_speed >= 100 else 100
+        load_distance = float(conf['variable_load_distance']) if 'variable_load_distance' in conf else 110
+        load_speed = int(float((conf['variable_load_speed']))) if 'variable_load_speed' in conf else 4500
+        unload_distance = float(conf['variable_unload_distance']) if 'variable_unload_distance' in conf else 100
+        unload_speed = int(float((conf['variable_unload_speed']))) if 'variable_unload_speed' in conf else 6000
+        maxlength = load_distance * 1.2 if load_distance >= 6 else 6
+        maxspeed = load_speed * 1.2 if load_speed >= 100 else 100
 
         self.options = [
             {"name": _("Load Distance"),
              "units": _("mm"),
-             "option": "retract_length",
-             "value": retract_length,
-             "digits": 2,
+             "option": "load_distance",
+             "value": load_distance,
+             "digits": 0,
              "maxval": maxlength},
             {"name": _("Load Speed"),
              "units": _("mm/s"),
-             "option": "retract_speed",
-             "value": retract_speed,
+             "option": "load_speed",
+             "value": load_speed,
              "digits": 0,
              "maxval": maxspeed},
             {"name": _("Unload Distance"),
              "units": _("mm"),
-             "option": "unretract_extra_length",
-             "value": unretract_extra_length,
-             "digits": 2,
+             "option": "unload_distance",
+             "value": unload_distance,
+             "digits": 0,
              "maxval": maxlength},
             {"name": _("Unload Speed"),
              "units": _("mm/s"),
-             "option": "unretract_speed",
-             "value": unretract_speed,
+             "option": "unload_speed",
+             "value": unload_speed,
              "digits": 0,
              "maxval": maxspeed}
         ]
@@ -57,6 +55,7 @@ class Panel(ScreenPanel):
             self.add_option(opt['option'], opt['name'], opt['units'], opt['value'], opt['digits'], opt["maxval"])
 
         self.reload_btn = self._gtk.Button("refresh", "Reload", "color1")
+        self.reload_btn.connect("clicked", self.reload)
         self.grid.attach(self.reload_btn, 0, len(self.options)+1, 1, 1)
 
         scroll = self._gtk.ScrolledWindow()
@@ -65,9 +64,8 @@ class Panel(ScreenPanel):
         self.content.add(scroll)
         self.content.show_all()
 
-    def activate(self):
-        # self._screen._ws.klippy.gcode_script("GET_RETRACTION")
-        pass
+    def reload(self):
+        self._screen.init_klipper()
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
@@ -102,7 +100,7 @@ class Panel(ScreenPanel):
             hexpand=True, vexpand=True, halign=Gtk.Align.START, valign=Gtk.Align.CENTER,
             wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR)
         name.set_markup(f"<big><b>{optname}</b></big> ({units})")
-        minimum = 1 if option in ["retract_speed", "unretract_speed"] else 0
+        minimum = 1 if option in ["load_speed", "unload_speed"] else 0
         self.values[option] = value
         # adj (value, lower, upper, step_increment, page_increment, page_size)
         adj = Gtk.Adjustment(value, minimum, maxval, 1, 5, 0)
@@ -139,11 +137,4 @@ class Panel(ScreenPanel):
     def set_opt_value(self, widget, event, opt):
         value = self.list[opt]['scale'].get_value()
 
-        # if opt == "retract_speed":
-        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_SPEED={value}")
-        # elif opt == "retract_length":
-        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_LENGTH={value}")
-        # elif opt == "unretract_extra_length":
-        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_EXTRA_LENGTH={value}")
-        # elif opt == "unretract_speed":
-        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_SPEED={value}")
+        
