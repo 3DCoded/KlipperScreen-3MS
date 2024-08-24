@@ -23,7 +23,7 @@ class Panel(ScreenPanel):
         unload_speed = int(float((conf['unload_speed']))) if 'unload_speed' in conf else 6000
         maxlength = 500
         maxspeed = 250
-        
+
         self.options = [
             {"name": _("Load Distance"),
              "units": _("mm"),
@@ -32,13 +32,13 @@ class Panel(ScreenPanel):
              "digits": 0,
              "maxval": maxlength},
             {"name": _("Unload Distance"),
-             "units": _("mm/s"),
+             "units": _("mm"),
              "option": "unload_distance",
              "value": unload_distance,
              "digits": 0,
              "maxval": maxlength},
             {"name": _("Load Speed"),
-             "units": _("mm"),
+             "units": _("mm/s"),
              "option": "load_speed",
              "value": load_speed,
              "digits": 0,
@@ -57,8 +57,8 @@ class Panel(ScreenPanel):
         scroll = self._gtk.ScrolledWindow()
         scroll.add(self.grid)
 
-        self.reload_btn = self._gtk.Button("refresh", "Reload", "color4")
-        self.reload_btn.connect("clicked", self.reload)
+        # self.reload_btn = self._gtk.Button("refresh", "Reload", "color4")
+        # self.reload_btn.connect("clicked", self.reload)
         # scroll.add(self.reload_btn)
 
         self.content.add(scroll)
@@ -69,7 +69,8 @@ class Panel(ScreenPanel):
 
     def activate(self):
         # self._screen._ws.klippy.gcode_script("GET_RETRACTION")
-        self._screen.init_klipper()
+        # self._screen.init_klipper()
+        pass
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
