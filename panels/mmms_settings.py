@@ -66,6 +66,11 @@ class Panel(ScreenPanel):
 
     def reload(self):
         self._screen.init_klipper()
+        settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
+        self.update_option('load_distance', settings['load_distance'])
+        self.update_option('load_speed', settings['load_speed'])
+        self.update_option('unload_distance', settings['unload_distance'])
+        self.update_option('unload_speed', settings['unload_speed'])
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
