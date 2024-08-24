@@ -240,7 +240,7 @@ class Panel(ScreenPanel):
 
         for x in self._printer.get_filament_sensors():
             if x in data and x in self.labels:
-                if 'switch' in self.labels[x]:
+                if 'enabled' in data[x] and 'switch' in self.labels[x]:
                     self.labels[x]['switch'].set_active(data[x]['enabled'])
                 if 'filament_detected' in data[x] and self._printer.get_stat(x, "enabled"):
                     if data[x]['filament_detected']:
@@ -313,7 +313,8 @@ class Panel(ScreenPanel):
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
         else:
             self._screen._ws.klippy.gcode_script(f"SET_FILAMENT_SENSOR SENSOR={name} ENABLE=0")
-            self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
+            self.labels[x]['box'].get_style_context().remove_class("filament_sensor_empty")
+            self.labels[x]['box'].get_style_context().remove_class("filament_sensor_detected")
 
     def update_temp(self, extruder, temp, target, power):
         if not temp:
