@@ -247,7 +247,12 @@ class Panel(ScreenPanel):
         save_variables = self._printer.get_stat('save_variables')
         previous_tool = save_variables['variables']['p']
         synced_tool = save_variables['variables']['synced']
-        self.buttons['status'].set_label(f'Current Tool: {previous_tool}')
+
+        status = f'Current Tool: T{previous_tool}' if previous_tool > -1 else 'No Tool Loaded'
+        self.buttons['status'].set_label(status)
+
+        if synced_tool > -1:
+            self.change_selected_tool(None, synced_tool)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
