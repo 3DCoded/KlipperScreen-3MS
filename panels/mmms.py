@@ -159,7 +159,7 @@ class Panel(ScreenPanel):
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
 
-        self.buttons['status'] = self._gtk.Button("", "Status Loading...", "color1")
+        self.buttons['status'] = self._gtk.Button("", "Click to Reload", "")
         self.buttons['status'].connect("clicked", self.reload)
         sensors.attach(self.buttons['status'], 0, 0, 1, 1)
 
