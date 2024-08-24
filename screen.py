@@ -295,6 +295,7 @@ class KlipperScreen(Gtk.Window):
         for f in self.printer.get_temp_fans():
             requested_updates['objects'][f] = ["target", "temperature"]
         for f in self.printer.get_fans():
+            logging.info(f'Requested Update Fan: {f}')
             requested_updates['objects'][f] = ["speed"]
         for f in self.printer.get_filament_sensors():
             requested_updates['objects'][f] = ["enabled", "filament_detected"]
