@@ -130,6 +130,7 @@ class BasePanel(ScreenPanel):
             pixbuf = img.get_pixbuf()
             width = pixbuf.get_width()
             height = pixbuf.get_height()
+            logging.info(f'Image name: {name} ({width}x{height})')
             button.set_image(self._gtk.Image(name, width, height))
 
     def show_heaters(self, show=True):
