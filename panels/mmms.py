@@ -50,7 +50,7 @@ class Panel(ScreenPanel):
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
-            'desync_all': self._gtk.Button("cancel", _("Desync Tool"), "color1"),
+            'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'reload': self._gtk.Button('reload', 'Reload', 'color1'),
             'settings': self._gtk.Button('settings', 'Settings', "color2")
         }
