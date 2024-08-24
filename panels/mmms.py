@@ -228,7 +228,7 @@ class Panel(ScreenPanel):
         
         for x in self._printer.get_filament_sensors():
             if x in data and x in self.labels:
-                if 'enabled' in data[x] and 'switch' in self.labels[x]:
+                if 'switch' in self.labels[x]:
                     self.labels[x]['switch'].set_active(data[x]['enabled'])
                 if 'filament_detected' in data[x] and self._printer.get_stat(x, "enabled"):
                     if data[x]['filament_detected']:
