@@ -15,12 +15,12 @@ class Panel(ScreenPanel):
         self.grid = Gtk.Grid()
         self.values = {}
         self.list = {}
-        conf = self._printer.get_config_section("firmware_retraction")
+        conf = self._printer.get_config_section("gcode_macro MMMS_SETTINGS")
 
-        retract_length = float(conf['retract_length']) if 'retract_length' in conf else 0
-        retract_speed = int(float((conf['retract_speed']))) if 'retract_speed' in conf else 20
-        unretract_extra_length = float(conf['unretract_extra_length']) if 'unretract_extra_length' in conf else 0
-        unretract_speed = int(float((conf['unretract_speed']))) if 'unretract_speed' in conf else 10
+        retract_length = float(conf['load_distance']) if 'load_distance' in conf else 0
+        retract_speed = int(float((conf['load_speed']))) if 'load_speed' in conf else 20
+        unretract_extra_length = float(conf['unload_distance']) if 'unload_distance' in conf else 0
+        unretract_speed = int(float((conf['unload_speed']))) if 'unload_speed' in conf else 10
         maxlength = retract_length * 1.2 if retract_length >= 6 else 6
         maxspeed = retract_speed * 1.2 if retract_speed >= 100 else 100
 
