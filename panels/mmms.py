@@ -240,7 +240,7 @@ class Panel(ScreenPanel):
     
     def reload(self, widget):
         self._screen.init_klipper() # Reload Klipper
-        settings = self.printer.get_stat('gcode_macro MMMS_SETTINGS')
+        settings = self._printer.get_stat('gcode_macro MMMS_SETTINGS')
         logging.info(settings)
     
     def sync_tool(self, widget):
