@@ -51,7 +51,8 @@ class Panel(ScreenPanel):
             'spoolman': self._gtk.Button("spoolman", "Spoolman", "color3"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'desync_all': self._gtk.Button("cancel", _("Desync Tool"), "color1"),
-            'reload': self._gtk.Button('reload', 'Reload', 'color1')
+            'reload': self._gtk.Button('reload', 'Reload', 'color1'),
+            'settings': self._gtk.Button('settings', 'Settings', "color2")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -62,6 +63,9 @@ class Panel(ScreenPanel):
         })
         self.buttons['spoolman'].connect("clicked", self.menu_item_clicked, {
             "panel": "spoolman"
+        })
+        self.buttons['settings'].connect("clicked", self.menu_item_clicked, {
+            "panel": "mmms_settings"
         })
         self.buttons['sync'].connect("clicked", self.sync_tool)
         self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
@@ -91,17 +95,7 @@ class Panel(ScreenPanel):
             label.set_justify(Gtk.Justification.CENTER)
             label.set_line_wrap(True)
             label.set_lines(2)
-        if extruder_buttons:
-            self.labels['extruders'] = AutoGrid(extruder_buttons, vertical=self._screen.vertical_mode)
-            self.labels['extruders_menu'] = self._gtk.ScrolledWindow()
-            self.labels['extruders_menu'].add(self.labels['extruders'])
-        if self._printer.extrudercount >= limit:
-            changer = self._gtk.Button("toolchanger")
-            changer.connect("clicked", self.load_menu, 'extruders', _('Extruders'))
-            xbox.add(Gtk.Label('3MS Control'))
-            self.labels["current_extruder"] = self._gtk.Button("extruder", "")
-            # xbox.add(self.labels["current_extruder"])
-            self.labels["current_extruder"].connect("clicked", self.load_menu, 'extruders', _('Extruders'))
+        xbox.add(self.buttons['settings'])
         if not self._screen.vertical_mode:
             xbox.add(self.buttons['sync'])
             i += 1
