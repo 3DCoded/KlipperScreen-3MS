@@ -59,6 +59,9 @@ class Panel(ScreenPanel):
         scroll = self._gtk.ScrolledWindow()
         scroll.add(self.grid)
 
+        self.reload_btn = self._gtk.Button("refresh", "Reload", "color1")
+        scroll.add(self.reload_btn)
+
         self.content.add(scroll)
         self.content.show_all()
 
