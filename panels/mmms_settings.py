@@ -136,5 +136,5 @@ class Panel(ScreenPanel):
 
     def set_opt_value(self, widget, event, opt):
         value = self.list[opt]['scale'].get_value()
-
-        
+        cmd = f'SET_MMMS_SETTINGS {opt}={value}'
+        self._screen._ws.klippy.gcode_script(cmd)
