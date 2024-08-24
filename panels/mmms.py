@@ -187,7 +187,7 @@ class Panel(ScreenPanel):
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor_detected")
             else:
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
-            sensors.attach(self.labels[x]['box'], s+1, 0, 1, 1)
+            sensors.attach(self.labels[x]['box'], s, 1, 1, 1)
 
         grid = Gtk.Grid(column_homogeneous=True)
         grid.attach(xbox, 0, 0, 4, 1)
