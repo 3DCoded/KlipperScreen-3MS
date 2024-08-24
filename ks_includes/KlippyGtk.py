@@ -117,7 +117,6 @@ class KlippyGtk:
     def Image(self, image_name=None, width=None, height=None):
         if image_name is None:
             return Gtk.Image()
-        logging.info(f'Image Name, width, height: {image_name} ({width}x{height})')
         pixbuf = self.PixbufFromIcon(image_name, width, height)
         return Gtk.Image.new_from_pixbuf(pixbuf) if pixbuf is not None else Gtk.Image()
 
