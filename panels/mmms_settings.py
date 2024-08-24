@@ -134,11 +134,11 @@ class Panel(ScreenPanel):
     def set_opt_value(self, widget, event, opt):
         value = self.list[opt]['scale'].get_value()
 
-        if opt == "retract_speed":
-            self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_SPEED={value}")
-        elif opt == "retract_length":
-            self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_LENGTH={value}")
-        elif opt == "unretract_extra_length":
-            self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_EXTRA_LENGTH={value}")
-        elif opt == "unretract_speed":
-            self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_SPEED={value}")
+        # if opt == "retract_speed":
+        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_SPEED={value}")
+        # elif opt == "retract_length":
+        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION RETRACT_LENGTH={value}")
+        # elif opt == "unretract_extra_length":
+        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_EXTRA_LENGTH={value}")
+        # elif opt == "unretract_speed":
+        #     self._screen._ws.klippy.gcode_script(f"SET_RETRACTION UNRETRACT_SPEED={value}")
