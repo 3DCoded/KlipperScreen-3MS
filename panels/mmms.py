@@ -158,6 +158,10 @@ class Panel(ScreenPanel):
 
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
+
+        self.labels['status'] = Gtk.Label("Status")
+        sensors.attach(self.labels['status'], 0, 0, 1, 1)
+
         with_switches = (
             len(filament_sensors) < 4
             and not (self._screen.vertical_mode and self._screen.height < 600)
@@ -183,7 +187,7 @@ class Panel(ScreenPanel):
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor_detected")
             else:
                 self.labels[x]['box'].get_style_context().add_class("filament_sensor_empty")
-            sensors.attach(self.labels[x]['box'], s, 0, 1, 1)
+            sensors.attach(self.labels[x]['box'], s+1, 0, 1, 1)
 
         grid = Gtk.Grid(column_homogeneous=True)
         grid.attach(xbox, 0, 0, 4, 1)
