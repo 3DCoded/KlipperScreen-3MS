@@ -245,7 +245,9 @@ class Panel(ScreenPanel):
     def reload(self, widget):
         self._screen.init_klipper() # Reload Klipper
         save_variables = self._printer.get_stat('save_variables')
-        logging.info(save_variables)
+        previous_tool = save_variables['variables']['p']
+        synced_tool = save_variables['variables']['synced']
+        self.buttons['status'].set_label(f'Current Tool: {previous_tool}')
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
