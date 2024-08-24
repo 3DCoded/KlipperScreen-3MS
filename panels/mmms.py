@@ -239,12 +239,9 @@ class Panel(ScreenPanel):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
     
     def reload(self, widget):
-        self._screen.show_popup_message('Reloading 3MS Control', 1)
-        self._screen.init_klipper()
-        data = copy.copy(self._printer.data)
-        data['configfile'] = {}
-        logging.info(data)
-        self.buttons['reload'].set_label('Reloaded')
+        self._screen.init_klipper() # Reload Klipper
+        settings = self.printer.get_stat('gcode_macro MMMS_SETTINGS')
+        logging.info(settings)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
