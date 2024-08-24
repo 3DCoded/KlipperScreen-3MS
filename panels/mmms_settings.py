@@ -59,7 +59,7 @@ class Panel(ScreenPanel):
 
         self.reload_btn = self._gtk.Button("refresh", "Reload", "color4")
         self.reload_btn.connect("clicked", self.reload)
-        scroll.add(self.reload_btn)
+        # scroll.add(self.reload_btn)
 
         self.content.add(scroll)
         self.content.show_all()
