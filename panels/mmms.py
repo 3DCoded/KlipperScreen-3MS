@@ -52,8 +52,8 @@ class Panel(ScreenPanel):
             'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'settings': self._gtk.Button('settings', 'Settings', "color1"),
             'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3"),
-            '3ms_load': self._gtk.Button('load', "3MS Load", "color1"),
-            '3ms_unload': self._gtk.Button('load', "3MS Unload", "color4")
+            '3ms_load': self._gtk.Button('arrow-down', "3MS Load", "color1"),
+            '3ms_unload': self._gtk.Button('arrow-up', "3MS Unload", "color4")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -208,18 +208,24 @@ class Panel(ScreenPanel):
         else:
             grid.attach(self.buttons['extrude'], 0, 2, 1, 1)
             grid.attach(self.buttons['load'], 1, 2, 1, 1)
-            grid.attach(self.buttons['3ms_load'], 2, 2, 1, 1)
-            grid.attach(self.buttons['3ms_unload'], 3, 2, 1, 1)
-            grid.attach(self.buttons['unload'], 4, 2, 1, 1)
-            grid.attach(self.buttons['retract'], 5, 2, 1, 1)
-            grid.attach(distbox, 0, 3, 2, 1)
-            grid.attach(selectbox, 2, 3, 2, 1)
-            grid.attach(speedbox, 0, 4, 2, 1)
-            grid.attach(sensors, 2, 4, 2, 1)
+            grid.attach(self.buttons['unload'], 2, 2, 1, 1)
+            grid.attach(self.buttons['retract'], 3, 2, 1, 1)
+            grid.attach(self.buttons['3ms_load'], 0, 3, 2, 1)
+            grid.attach(self.buttons['3ms_unload'], 2, 3, 2, 1)
+            grid.attach(distbox, 0, 4, 2, 1)
+            grid.attach(selectbox, 2, 4, 2, 1)
+            grid.attach(speedbox, 0, 5, 2, 1)
+            grid.attach(sensors, 2, 5, 2, 1)
 
         self.menu = ['extrude_menu']
         self.labels['extrude_menu'] = grid
-        self.content.add(self.labels['extrude_menu'])
+
+        scroll = self._gtk.ScrolledWindow()
+        scroll.add(self.labels['extrude_menu'])
+
+        self.content.add(scroll)
+        self.content.show_all()
+        # self.content.add(self.labels['extrude_menu'])
 
     def enable_buttons(self, enable):
         for button in self.buttons:
