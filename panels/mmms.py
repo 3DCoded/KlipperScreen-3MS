@@ -58,6 +58,8 @@ class Panel(ScreenPanel):
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
         self.buttons['unload'].connect("clicked", self.check_min_temp, "load_unload", "-")
+        self.buttons['3ms_load'].connect("clicked", self.check_min_temp, "load_unload", "3+")
+        self.buttons['3ms_unload'].connect("clicked", self.check_min_temp, "load_unload", "3-")
         self.buttons['retract'].connect("clicked", self.check_min_temp, "extrude", "-")
         self.buttons['temperature'].connect("clicked", self.menu_item_clicked, {
             "panel": "temperature"
@@ -364,10 +366,16 @@ class Panel(ScreenPanel):
     def load_unload(self, widget, direction):
         if direction == "-":
             self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": "MMMS_UNLOAD"})
+                                        {"script": "UNLOAD_FILAMENT"})
         if direction == "+":
             self._screen._send_action(widget, "printer.gcode.script",
+                                        {"script": "LOAD_FILAMENT"})
+        if direction == "3+":
+            self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": "MMMS_LOAD"})
+        if direction == "3-":
+            self._screen._send_action(widget, "printer.gcode.script",
+                                        {"script": "MMMS_UNLOAD"})
 
     def enable_disable_fs(self, switch, gparams, name, x):
         if switch.get_active():
