@@ -331,12 +331,8 @@ class Panel(ScreenPanel):
     def change_selected_tool(self, widget, selected):
         logging.info(f"### Selected Tool {selected}")
         self.labels[f"tool{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
-        if selected == -1 or selected == self.selected_tool:
-            if widget is not None:
-                self._screen._send_action(widget, "printer.gcode.script", {"script": "DESYNC_ALL_TOOLS"})
+        if selected == -1:
             return
-        if widget is not None:
-            self._screen._send_action(widget, "printer.gcode.script", {"script": f"SYNC_TOOL TOOL={selected}"})
         self.labels[f"tool{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
         self.selected_tool = selected
 
