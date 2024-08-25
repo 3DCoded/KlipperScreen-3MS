@@ -157,7 +157,7 @@ class Panel(ScreenPanel):
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
 
-        self.labels['status'] = self.Gtk.Label("Loading Status...")
+        self.labels['status'] = Gtk.Label("Loading Status...")
         sensors.attach(self.labels['status'], 0, 0, 1, 1)
 
         with_switches = (
