@@ -281,7 +281,7 @@ class KlipperScreen(Gtk.Window):
                 "manual_probe": ['is_active'],
                 "screws_tilt_adjust": ['results', 'error'],
                 # 3MS
-                "gcode_macro MMMS_SETTINGS": ['variable_load_distance', 'variable_unload_distance'],
+                "gcode_macro MMMS_SETTINGS": ['load_distance', 'unload_distance'],
                 "save_variables": ['variables']
             }
         }
