@@ -50,7 +50,6 @@ class Panel(ScreenPanel):
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
-            'reload': self._gtk.Button('reload', 'Reload', 'color1'),
             'settings': self._gtk.Button('settings', 'Settings', "color1"),
             'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3")
         }
@@ -67,7 +66,6 @@ class Panel(ScreenPanel):
         self.buttons['sync'].connect("clicked", self.sync_tool)
         self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
         self.buttons['clear_tool'].connect("clicked", self.clear_tool)
-        self.buttons['reload'].connect("clicked", self.reload)
 
         xbox = Gtk.Box(homogeneous=True)
         limit = 4
@@ -212,7 +210,6 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['retract'], 3, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
-            # grid.attach(self.buttons['reload'], 0, 4, 2, 1)
             grid.attach(speedbox, 0, 4, 2, 1)
             grid.attach(sensors, 2, 4, 2, 1)
 
@@ -222,7 +219,7 @@ class Panel(ScreenPanel):
 
     def enable_buttons(self, enable):
         for button in self.buttons:
-            if button in ("pressure", "retraction", "spoolman", "temperature", "settings", "clear_tool", "desync_all", "sync", "status", "reload"):
+            if button in ("pressure", "retraction", "spoolman", "temperature", "settings", "clear_tool", "desync_all", "sync", "status"):
                 continue
             self.buttons[button].set_sensitive(enable)
     
