@@ -245,9 +245,9 @@ class Panel(ScreenPanel):
                                         {"script": f"SYNC_TOOL TOOL={self.selected_tool}"})
 
     def desync_all_tools(self, widget):
-        self._screen.show_popup_message('Desyncing All Tools', 1)
         self._screen._send_action(widget, "printer.gcode.script",
                                         {"script": "DESYNC_ALL_TOOLS"})
+        self.change_selected_tool(None, -1)
     
     def clear_tool(self, widget):
         self._screen.show_popup_message('Clearing Tool', 1)
