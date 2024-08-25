@@ -256,7 +256,7 @@ class Panel(ScreenPanel):
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "save_variables" in data:
-            save_variables = data['save_variables']
+            save_variables = data['save_variables']['variables']
             if 'synced' in save_variables and 'p' in save_variables:
                 self.set_status(save_variables['synced'], save_variables['p'])
             else:
