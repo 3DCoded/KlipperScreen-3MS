@@ -259,6 +259,8 @@ class Panel(ScreenPanel):
             save_variables = data['save_variables']
             if 'synced' in save_variables and 'p' in save_variables:
                 self.set_status(save_variables['synced'], save_variables['p'])
+            else:
+                logging.info(f'3MS: Save variables: {save_variables}')
             
         if action == "notify_gcode_response":
             if "action:cancel" in data or "action:paused" in data:
