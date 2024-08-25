@@ -1,14 +1,14 @@
 import logging
 import re
-import gi
-import copy
+import gi # type: ignore # noqa: E402, F401
+import copy # noqa: E402, F401
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango
-from ks_includes.KlippyGcodes import KlippyGcodes
-from ks_includes.screen_panel import ScreenPanel
-from ks_includes.widgets.autogrid import AutoGrid
-from ks_includes.KlippyGtk import find_widget
+from gi.repository import Gtk, Pango # type: ignore # noqa: E402, F401
+from ks_includes.KlippyGcodes import KlippyGcodes # noqa: E402, F401
+from ks_includes.screen_panel import ScreenPanel # noqa: E402, F401
+from ks_includes.widgets.autogrid import AutoGrid # noqa: E402, F401
+from ks_includes.KlippyGtk import find_widget # noqa: E402, F401
 
 
 class Panel(ScreenPanel):
@@ -19,8 +19,8 @@ class Panel(ScreenPanel):
         self.current_extruder = self._printer.get_stat("toolhead", "extruder")
         macros = self._printer.get_config_section_list("gcode_macro ")
 
-        self.config_options = self.get_mmms_options()
-        self.config_tools = self.config_options['tools']
+        conf = self._printer.get_config_section("gcode_macro MMMS_SETTINGS")
+        self.config_tools = conf['num_tools']
 
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
@@ -234,13 +234,6 @@ class Panel(ScreenPanel):
             if button in ("pressure", "retraction", "spoolman", "temperature", "settings", "clear_tool", "desync_all", "sync", "status"):
                 continue
             self.buttons[button].set_sensitive(enable)
-    
-    def get_mmms_options(self):
-        config = self._screen._config.config
-        if '3ms' not in config:
-            return {'tools': 2}
-        cfg = config['3ms']
-        return {'tools': cfg.getint('tools', 2)}
 
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
@@ -338,8 +331,10 @@ class Panel(ScreenPanel):
     def change_selected_tool(self, widget, selected):
         logging.info(f"### Selected Tool {selected}")
         self.labels[f"tool{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
-        if selected == -1:
+        if selected == -1 or selected == self.selected_tool:
+            self._screen._send_action(widget, "printer.gcode.script", {"script": "DESYNC_ALL_TOOLS"})
             return
+        self._screen._send_action(widget, "printer.gcode.script", {"script": f"SYNC_TOOL TOOL={selected}"})
         self.labels[f"tool{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
         self.selected_tool = selected
 
