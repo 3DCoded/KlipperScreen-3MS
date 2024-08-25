@@ -74,6 +74,8 @@ class Panel(ScreenPanel):
         self._screen.show_popup_message('Reloaded', 1)
 
     def process_update(self, action, data):
+        if action == "notify_status_update":
+            logging.info(f'STATUS! {data}')
         if action == "notify_status_update" and "gcode_macro MMMS_SETTINGS" in data:
             for opt in self.list:
                 if opt in data["gcode_macro MMMS_SETTINGS"]:
