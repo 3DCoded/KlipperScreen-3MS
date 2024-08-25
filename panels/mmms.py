@@ -257,7 +257,8 @@ class Panel(ScreenPanel):
     def process_update(self, action, data):
         if action == "notify_status_update" and "save_variables" in data:
             save_variables = data['save_variables']
-            self.set_status(save_variables['synced_tool'], save_variables['p'])
+            if 'synced' in save_variables and 'p' in save_variables:
+                self.set_status(save_variables['synced'], save_variables['p'])
             
         if action == "notify_gcode_response":
             if "action:cancel" in data or "action:paused" in data:
