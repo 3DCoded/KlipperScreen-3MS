@@ -51,7 +51,9 @@ class Panel(ScreenPanel):
             'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
             'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'settings': self._gtk.Button('settings', 'Settings', "color1"),
-            'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3")
+            'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3"),
+            '3ms_load': self._gtk.Button('load', "3MS Load", "color1"),
+            '3ms_unload': self._gtk.Button('load', "3MS Unload", "color4")
         }
         self.buttons['extrude'].connect("clicked", self.check_min_temp, "extrude", "+")
         self.buttons['load'].connect("clicked", self.check_min_temp, "load_unload", "+")
@@ -206,8 +208,10 @@ class Panel(ScreenPanel):
         else:
             grid.attach(self.buttons['extrude'], 0, 2, 1, 1)
             grid.attach(self.buttons['load'], 1, 2, 1, 1)
-            grid.attach(self.buttons['unload'], 2, 2, 1, 1)
-            grid.attach(self.buttons['retract'], 3, 2, 1, 1)
+            grid.attach(self.buttons['3ms_load'], 2, 2, 1, 1)
+            grid.attach(self.buttons['3ms_unload'], 3, 2, 1, 1)
+            grid.attach(self.buttons['unload'], 4, 2, 1, 1)
+            grid.attach(self.buttons['retract'], 5, 2, 1, 1)
             grid.attach(distbox, 0, 3, 2, 1)
             grid.attach(selectbox, 2, 3, 2, 1)
             grid.attach(speedbox, 0, 4, 2, 1)
