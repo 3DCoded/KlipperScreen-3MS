@@ -159,9 +159,8 @@ class Panel(ScreenPanel):
         filament_sensors = self._printer.get_filament_sensors()
         sensors = Gtk.Grid(valign=Gtk.Align.CENTER, row_spacing=5, column_spacing=5)
 
-        self.buttons['status'] = self._gtk.Button("", "Click to Reload", "")
-        self.buttons['status'].connect("clicked", self.reload)
-        sensors.attach(self.buttons['status'], 0, 0, 1, 1)
+        self.labels['status'] = self.Gtk.Label("Loading Status...")
+        sensors.attach(self.labels['status'], 0, 0, 1, 1)
 
         with_switches = (
             len(filament_sensors) < 4
@@ -237,16 +236,11 @@ class Panel(ScreenPanel):
     def activate(self):
         self.enable_buttons(self._printer.state in ("ready", "paused"))
     
-    def reload(self, widget):
-        self._screen.init_klipper() # Reload Klipper
-        save_variables = self._printer.get_stat('save_variables')
-        previous_tool = save_variables['variables']['p']
-        synced_tool = save_variables['variables']['synced']
+    def set_status(self, new_synced, new_tool):
+        status = f'Current Tool: T{new_tool}' if new_tool > -1 else 'No Tool Loaded'
+        self.labels['status'].set_label(status)
 
-        status = f'Current Tool: T{previous_tool}' if previous_tool > -1 else 'No Tool Loaded'
-        self.buttons['status'].set_label(status)
-
-        self.change_selected_tool(None, synced_tool)
+        self.change_selected_tool(None, new_synced)
     
     def sync_tool(self, widget):
         self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
@@ -265,8 +259,9 @@ class Panel(ScreenPanel):
 
     def process_update(self, action, data):
         if action == "notify_status_update" and "save_variables" in data:
-            new_data = data['save_variables']
-            logging.info(new_data)
+            save_variables = data['save_variables']
+            self.set_status(save_variables['synced_tool'], save_variables['p'])
+            
         if action == "notify_gcode_response":
             if "action:cancel" in data or "action:paused" in data:
                 self.enable_buttons(True)
