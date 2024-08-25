@@ -20,7 +20,7 @@ class Panel(ScreenPanel):
         macros = self._printer.get_config_section_list("gcode_macro ")
 
         conf = self._printer.get_config_section("gcode_macro MMMS_SETTINGS")
-        self.config_tools = conf.get('variable_num_tools', 2)
+        self.config_tools = int(conf.get('variable_num_tools', 2))
 
         self.load_filament = any("LOAD_FILAMENT" in macro.upper() for macro in macros)
         self.unload_filament = any("UNLOAD_FILAMENT" in macro.upper() for macro in macros)
