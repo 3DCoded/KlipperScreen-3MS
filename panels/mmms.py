@@ -48,8 +48,6 @@ class Panel(ScreenPanel):
             'unload': self._gtk.Button("arrow-up", _("Unload"), "color2"),
             'retract': self._gtk.Button("retract", _("Retract"), "color1"),
             'temperature': self._gtk.Button("heat-up", _("Temperature"), "color4"),
-            'sync': self._gtk.Button("complete", _("Sync Tool"), "color2"),
-            'desync_all': self._gtk.Button("cancel", _("Desync All Tools"), "color1"),
             'settings': self._gtk.Button('settings', 'Settings', "color1"),
             'clear_tool': self._gtk.Button('delete', 'Clear Tool', "color3"),
             '3ms_load': self._gtk.Button('arrow-down', "3MS Load", "color1"),
@@ -67,47 +65,17 @@ class Panel(ScreenPanel):
         self.buttons['settings'].connect("clicked", self.menu_item_clicked, {
             "panel": "mmms_settings"
         })
-        self.buttons['sync'].connect("clicked", self.sync_tool)
-        self.buttons['desync_all'].connect("clicked", self.desync_all_tools)
         self.buttons['clear_tool'].connect("clicked", self.clear_tool)
 
         xbox = Gtk.Box(homogeneous=True)
         limit = 4
         i = 0
-        extruder_buttons = []
         self.labels = {}
-        for extruder in self._printer.get_tools():
-            if self._printer.extrudercount == 1:
-                self.labels[extruder] = self._gtk.Button("extruder", "")
-            else:
-                n = self._printer.get_tool_number(extruder)
-                self.labels[extruder] = self._gtk.Button(f"extruder-{n}", f"T{n}")
-                self.labels[extruder].connect("clicked", self.change_extruder, extruder)
-            if extruder == self.current_extruder:
-                self.labels[extruder].get_style_context().add_class("button_active")
-            if self._printer.extrudercount < limit:
-                xbox.add(self.labels[extruder])
-                i += 1
-            else:
-                extruder_buttons.append(self.labels[extruder])
-        for widget in self.labels.values():
-            label = find_widget(widget, Gtk.Label)
-            label.set_justify(Gtk.Justification.CENTER)
-            label.set_line_wrap(True)
-            label.set_lines(2)
+
         xbox.add(self.buttons['settings'])
         if not self._screen.vertical_mode:
-            xbox.add(self.buttons['sync'])
-            i += 1
-        if not self._screen.vertical_mode:
-            xbox.add(self.buttons['desync_all'])
-            i += 1
-        if not self._screen.vertical_mode:
             xbox.add(self.buttons['clear_tool'])
-        if i < limit:
-            xbox.add(self.buttons['temperature'])
-        if i < (limit - 1) and self._printer.spoolman:
-            xbox.add(self.buttons['spoolman'])
+        xbox.add(self.buttons['temperature'])
 
         speedgrid = Gtk.Grid()
         for j, i in enumerate(self.speeds):
@@ -200,9 +168,6 @@ class Panel(ScreenPanel):
             grid.attach(self.buttons['load'], 0, 2, 2, 1)
             grid.attach(self.buttons['unload'], 2, 2, 2, 1)
             settings_box = Gtk.Box(homogeneous=True)
-            settings_box.add(self.buttons['sync'])
-            if self._printer.get_config_section("firmware_retraction"):
-                settings_box.add(self.buttons['desync_all'])
             grid.attach(settings_box, 0, 3, 4, 1)
             grid.attach(distbox, 0, 4, 4, 1)
             grid.attach(selectbox, 0, 5, 4, 1)
@@ -218,6 +183,8 @@ class Panel(ScreenPanel):
             grid.attach(selectbox, 2, 4, 2, 1)
             grid.attach(speedbox, 0, 5, 2, 1)
             grid.attach(sensors, 2, 5, 2, 1)
+        
+        self.grid = grid
 
         self.menu = ['extrude_menu']
         self.labels['extrude_menu'] = grid
@@ -227,7 +194,6 @@ class Panel(ScreenPanel):
 
         self.content.add(scroll)
         self.content.show_all()
-        # self.content.add(self.labels['extrude_menu'])
 
     def enable_buttons(self, enable):
         for button in self.buttons:
@@ -243,16 +209,6 @@ class Panel(ScreenPanel):
         self.labels['status'].set_label(status)
 
         self.change_selected_tool(None, new_synced)
-    
-    def sync_tool(self, widget):
-        self._screen.show_popup_message(f'Syncing Tool T{self.selected_tool}', 1)
-        self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": f"SYNC_TOOL TOOL={self.selected_tool}"})
-
-    def desync_all_tools(self, widget):
-        self._screen._send_action(widget, "printer.gcode.script",
-                                        {"script": "DESYNC_ALL_TOOLS"})
-        self.change_selected_tool(None, -1)
     
     def clear_tool(self, widget):
         self._screen.show_popup_message('Clearing Tool', 1)
@@ -275,14 +231,6 @@ class Panel(ScreenPanel):
             return
         if action != "notify_status_update":
             return
-        for x in self._printer.get_tools():
-            if x in data:
-                self.update_temp(
-                    x,
-                    self._printer.get_stat(x, "temperature"),
-                    self._printer.get_stat(x, "target"),
-                    self._printer.get_stat(x, "power"),
-                )
         if "current_extruder" in self.labels:
             self.labels["current_extruder"].set_label(self.labels[self.current_extruder].get_label())
 
@@ -330,10 +278,21 @@ class Panel(ScreenPanel):
 
     def change_selected_tool(self, widget, selected):
         logging.info(f"### Selected Tool {selected}")
+
+        if selected == self.selected_tool and widget is None:
+            return
+        
         self.labels[f"tool{self.selected_tool}"].get_style_context().remove_class("horizontal_togglebuttons_active")
         if selected == -1:
             return
         self.labels[f"tool{selected}"].get_style_context().add_class("horizontal_togglebuttons_active")
+
+        if widget is not None:
+            if selected == self.selected_tool:
+                self._screen._send_action(widget, "printer.gcode.script", {"script": f"DESYNC_TOOL TOOL={selected}"})
+            else:
+                self._screen._send_action(widget, "printer.gcode.script", {"script": f"SYNC_TOOL TOOL={selected}"})
+
         self.selected_tool = selected
 
     def check_min_temp(self, widget, method, direction):
@@ -381,14 +340,3 @@ class Panel(ScreenPanel):
             self._screen._ws.klippy.gcode_script(f"SET_FILAMENT_SENSOR SENSOR={name} ENABLE=0")
             self.labels[x]['box'].get_style_context().remove_class("filament_sensor_empty")
             self.labels[x]['box'].get_style_context().remove_class("filament_sensor_detected")
-        
-    def update_temp(self, extruder, temp, target, power):
-        if not temp:
-            return
-        new_label_text = f"{temp or 0:.0f}"
-        if target:
-            new_label_text += f"/{target:.0f}"
-        new_label_text += "°\n"
-        if self._show_heater_power and power:
-            new_label_text += f" {power * 100:.0f}%"
-        find_widget(self.labels[extruder], Gtk.Label).set_text(new_label_text)

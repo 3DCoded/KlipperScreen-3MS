@@ -21,8 +21,10 @@ class Panel(ScreenPanel):
         load_speed = int(float((conf['variable_load_speed']))) if 'variable_load_speed' in conf else 4500
         unload_distance = float(conf['variable_unload_distance']) if 'variable_unload_distance' in conf else 100
         unload_speed = int(float((conf['variable_unload_speed']))) if 'variable_unload_speed' in conf else 6000
+        fsensor_delay = int(float((conf['variable_fsensor_delay']))) if 'variable_fsensor_delay' in conf else 2000
         maxlength = load_distance * 1.2 if load_distance >= 6 else 6
         maxspeed = load_speed * 1.2 if load_speed >= 100 else 100
+        maxtime = fsensor_delay * 2
 
         self.options = [
             {"name": _("Load Distance"),
@@ -48,11 +50,18 @@ class Panel(ScreenPanel):
              "option": "unload_speed",
              "value": unload_speed,
              "digits": 0,
-             "maxval": maxspeed}
+             "maxval": maxspeed},
+            {"name": _("Filament Sensor Delay"),
+             "units": _("ms"),
+             "option": "fsensor_delay",
+             "value": fsensor_delay,
+             "digits": 0,
+             "maxval": maxtime}
         ]
 
-        for opt in self.options:
-            self.add_option(opt['option'], opt['name'], opt['units'], opt['value'], opt['digits'], opt["maxval"])
+        for i in range(len(self.options)):
+            opt = self.options[i]
+            self.add_option(opt['option'], opt['name'], opt['units'], opt['value'], opt['digits'], opt["maxval"], i)
 
         self.reload_btn = self._gtk.Button("refresh", "Reload", "color1")
         self.reload_btn.connect("clicked", self.reload)
@@ -71,6 +80,7 @@ class Panel(ScreenPanel):
         self.update_option('load_speed', settings['load_speed'])
         self.update_option('unload_distance', settings['unload_distance'])
         self.update_option('unload_speed', settings['unload_speed'])
+        self.update_option('fsensor_delay', settings['fsensor_delay'])
         self._screen.show_popup_message('Reloaded', 1)
 
     def process_update(self, action, data):
@@ -99,7 +109,7 @@ class Panel(ScreenPanel):
         self.list[option]['scale'].disconnect_by_func(self.set_opt_value)
         self.list[option]['scale'].connect("button-release-event", self.set_opt_value, option)
 
-    def add_option(self, option, optname, units, value, digits, maxval):
+    def add_option(self, option, optname, units, value, digits, maxval, index):
         logging.info(f"Adding option: {option}")
 
         name = Gtk.Label(
@@ -130,8 +140,8 @@ class Panel(ScreenPanel):
             "adjustment": adj,
         }
 
-        pos = sorted(self.list).index(option)
-        self.grid.attach(self.list[option]['row'], 0, pos, 1, 1)
+        # pos = sorted(self.list).index(option)
+        self.grid.attach(self.list[option]['row'], 0, index, 1, 1)
         self.grid.show_all()
 
     def reset_value(self, widget, option):
