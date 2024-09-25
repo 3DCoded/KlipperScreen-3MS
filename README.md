@@ -18,6 +18,6 @@ KlipperScreen for 3MS is a fork of KlipperScreen designed for use with the [3MS]
 
 **BETA!**
 
-See the [Documentation](https://3dcoded.github.io/3MS/setup/KlipperScreen).
+See the [Documentation](https://3dcoded.github.io/3MS/setup/klipperscreen).
 
 ---
