@@ -59,7 +59,7 @@ class BasePanel(ScreenPanel):
             "panel": "mmms",
             "icon": "3ms"
         }
-        self.control['mmms_shortcut'] = self._gtk.Button(self.mmms_shortcut['icon'], scale=abscale)
+        self.control['mmms_shortcut'] = self._gtk.Button(self.mmms_shortcut['icon'], scale=self.abscale)
         self.control['mmms_shortcut'].connect("clicked", self._screen._menu_go_to, 'mmms', "3MS")
         self.control['mmms_shortcut'].set_no_show_all(True)
 
