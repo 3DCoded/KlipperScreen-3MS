@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-
+import psutil
 import gi
 
 gi.require_version("Gtk", "3.0")
@@ -18,6 +18,7 @@ class BasePanel(ScreenPanel):
         self.time_min = -1
         self.time_format = self._config.get_main_config().getboolean("24htime", True)
         self.time_update = None
+        self.battery_update = None
         self.titlebar_items = []
         self.titlebar_name_type = None
         self.current_extruder = None
@@ -99,11 +100,23 @@ class BasePanel(ScreenPanel):
         self.control['time_box'] = Gtk.Box(halign=Gtk.Align.END)
         self.control['time_box'].pack_end(self.control['time'], True, True, 10)
 
+        self.battery_icons = self.load_battery_icons()
+        self.labels['battery'] = Gtk.Label()
+        self.labels['battery_icon'] = self._gtk.Image()
+        self.labels['battery_icon'].set_from_pixbuf(self.battery_icons['unknown'])
+        self.control['battery_box'] = Gtk.Box(halign=Gtk.Align.END)
+        self.control['battery_box'].set_no_show_all(True)
+        self.control['battery_box'].add(self.labels['battery'])
+        self.control['battery_box'].add(self.labels['battery_icon'])
+        for widget in self.control['battery_box']:
+            widget.show()
+
         self.titlebar = Gtk.Box(spacing=5, valign=Gtk.Align.CENTER)
         self.titlebar.get_style_context().add_class("title_bar")
         self.titlebar.add(self.control['temp_box'])
         self.titlebar.add(self.titlelbl)
         self.titlebar.add(self.control['time_box'])
+        self.titlebar.add(self.control['battery_box'])
         self.set_title(title)
 
         # Main layout
@@ -122,6 +135,18 @@ class BasePanel(ScreenPanel):
 
         self.update_time()
 
+    def load_battery_icons(self):
+        img_size = self._gtk.img_scale * self.bts
+        return {
+            'charging': self._gtk.PixbufFromIcon('battery-charging', img_size, img_size),
+            '100': self._gtk.PixbufFromIcon('battery-100', img_size, img_size),
+            '75': self._gtk.PixbufFromIcon('battery-75', img_size, img_size),
+            '50': self._gtk.PixbufFromIcon('battery-50', img_size, img_size),
+            '25': self._gtk.PixbufFromIcon('battery-25', img_size, img_size),
+            '0': self._gtk.PixbufFromIcon('battery-0', img_size, img_size),
+            'unknown': self._gtk.PixbufFromIcon('battery-unknown', img_size, img_size),
+        }
+
     def reload_icons(self):
         button: Gtk.Button
         for button in self.action_bar.get_children():
@@ -129,21 +154,25 @@ class BasePanel(ScreenPanel):
             name = button.get_name()
             pixbuf = img.get_pixbuf()
             if pixbuf is not None:
-                logging.error(f"Couldn't get pixbuf for {name},"
-                              f"a custom theme may have caused this")
                 size = pixbuf.get_width()
             else:
+                logging.error(f"Couldn't get pixbuf for {name},"
+                              f"a custom theme may have caused this")
                 size = self._gtk.img_scale * self.abscale * 1.4
             button.set_image(self._gtk.Image(name, size, size))
 
-    def show_heaters(self, show=True):
-        try:
-            for child in self.control['temp_box'].get_children():
-                self.control['temp_box'].remove(child)
-            devices = self._printer.get_temp_devices()
-            if not show or not devices:
-                return
+        self.battery_icons = self.load_battery_icons()
+        self.battery_percentage()
 
+    def show_heaters(self, show=True):
+        for child in self.control['temp_box'].get_children():
+            self.control['temp_box'].remove(child)
+        if self._printer is None or not show:
+            return
+        try:
+            devices = self._printer.get_temp_devices()
+            if not devices:
+                return
             img_size = self._gtk.img_scale * self.bts
             for device in devices:
                 self.labels[device] = Gtk.Label(ellipsize=Pango.EllipsizeMode.START)
@@ -209,15 +238,18 @@ class BasePanel(ScreenPanel):
     def activate(self):
         if self.time_update is None:
             self.time_update = GLib.timeout_add_seconds(1, self.update_time)
+        if self.battery_update is None:
+            self.battery_update = GLib.timeout_add_seconds(60, self.battery_percentage)
 
     def add_content(self, panel):
         printing = self._printer and self._printer.state in {"printing", "paused"}
         connected = self._printer and self._printer.state not in {'disconnected', 'startup', 'shutdown', 'error'}
+        printer_select = 'printer_select' not in self._screen._cur_panels
         self.control['estop'].set_visible(printing)
         self.control['shutdown'].set_visible(not printing)
-        self.show_shortcut(connected)
+        self.show_shortcut(connected and printer_select)
         self.show_mmms_shortcut(connected and self._config.get_main_config().getboolean('side_mmms_shortcut', True)) # 3MS
-        self.show_heaters(connected)
+        self.show_heaters(connected and printer_select)
         self.show_printer_select(len(self._config.get_printers()) > 1)
         for control in ('back', 'home'):
             self.set_control_sensitive(len(self._screen._cur_panels) > 1, control=control)
@@ -278,10 +310,12 @@ class BasePanel(ScreenPanel):
                         for dialog in self._screen.dialogs:
                             self._gtk.remove_dialog(dialog)
             return
-
         if action != "notify_status_update" or self._screen.printer is None:
             return
-        for device in self._printer.get_temp_devices():
+        devices = self._printer.get_temp_devices()
+        if not devices:
+            return
+        for device in devices:
             temp = self._printer.get_stat(device, "temperature")
             if temp and device in self.labels:
                 name = ""
@@ -332,7 +366,10 @@ class BasePanel(ScreenPanel):
 
     def set_title(self, title):
         self.titlebar.get_style_context().remove_class("message_popup_error")
-        if self._screen.connecting_to_printer != "Printer":
+        if (
+                self._screen.connecting_to_printer != "Printer"
+                and 'printer_select' not in self._screen._cur_panels
+        ):
             printer = self._screen.connecting_to_printer
         else:
             printer = ""
@@ -360,6 +397,37 @@ class BasePanel(ScreenPanel):
             self.time_min = now.minute
             self.time_format = confopt
         return True
+
+    def get_battery_icon(self, charge: float, plugged: bool):
+        if plugged:
+            return self.battery_icons['charging']
+        elif charge > 75:
+            return self.battery_icons['100']
+        elif charge > 50:
+            return self.battery_icons['75']
+        elif charge > 25:
+            return self.battery_icons['50']
+        elif charge > 10:
+            return self.battery_icons['25']
+        elif charge >= 0:
+            return self.battery_icons['0']
+        else:
+            return self.battery_icons['unknown']
+
+    def battery_percentage(self):
+        battery = psutil.sensors_battery()
+        if battery and battery.percent:
+            self.labels['battery_icon'].set_from_pixbuf(
+                self.get_battery_icon(battery.percent, battery.power_plugged)
+            )
+            self.labels['battery'].set_text(f'{battery.percent:.0f}%')
+            logging.debug(f"Battery: {battery.percent}% Power plugged in: {'Yes' if battery.power_plugged else 'No'}")
+            self.control['battery_box'].show()
+            return True
+        else:
+            logging.debug("Battery information not available.")
+            self.control['battery_box'].hide()
+            return False
 
     def set_ks_printer_cfg(self, printer):
         ScreenPanel.ks_printer_cfg = self._config.get_printer_config(printer)
